@@ -186,6 +186,16 @@ function init() {
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     camera.position.x =-1.3
+    const startButton = document.getElementById( 'startButton' );
+    startButton.addEventListener( 'click', function () {
+
+        video1.play()
+        const overlay = document.getElementById( 'overlay' );
+        overlay.remove();
+        video.play()
+        animate()
+    } );
+
 
 
 
@@ -198,7 +208,7 @@ async function init2(){
     console.log(contenedor)
     contenedor.style.visibility='hidden';
     contenedor.style.opacity=0;
-    animate()
+
 }
 function abogacia(){
     return new Promise((resolve,reject)=>{
@@ -368,9 +378,7 @@ function onKeyUp() {
 }
 
 function onClick( event ) {
-    console.log('pasa por aca')
-    video.play()
-    video1.play()
+
 
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
