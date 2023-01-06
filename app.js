@@ -4,17 +4,21 @@ import { DragControls } from './jsm/controls/DragControls.js';
 import * as THREE from './three.module.js';
 import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 import { createText } from './jsm/webxr/Text2D.js';
+import {crearcarte} from "./secciones.js";
 
 let container;
 var camera, scene, renderer;
 let controls, group,group1,group2,group3,group4;
 let enableSelection = false;
 let mixer;
+var mostro=true;
+
 let mousemove,actionScroll,aumento;
 let tractor,avaco,hammer;
 var video, videoImage, videoImageContext, videoTexture,movieScreen;
 var video1, videoImage1, videoImageContext1, videoTexture1,movieScreen1;
 let selecion=false;
+var seleccion=undefined;
 
 const objects = [];
 
@@ -391,7 +395,7 @@ function onClick( event ) {
     if ( intersections.length > 0 ) {
 
         const object = intersections[ 0 ].object;
-        console.log(object)
+        seleccion=object;
 
     }
 
@@ -430,11 +434,29 @@ function getIntersections() {
 
 function render() {
     renderer.render( scene, camera );
+
     flotar()
 
     if(mousemove!=undefined){
         getIntersections();
     }
+    if(seleccion!=undefined){
+        if(camera.position.z>-1) {
+            camera.position.z=camera.position.z-0.02
+            movieScreen1.position.z=movieScreen1.position.z-0.02;
+        }else{
+            if(mostro){
+                mostrar()
+                console.log("Pasa por aca//////////////////////////")
+            }
+
+        }
+
+        console.log(camera.position.z)
+    }else{
+        zoom();
+    }
+
     if ( video.readyState === video.HAVE_ENOUGH_DATA )
     {
         videoImageContext.drawImage( video, 0, 0 );
@@ -447,9 +469,8 @@ function render() {
         if ( videoTexture1 )
             videoTexture1.needsUpdate = true;
     }
-    zoom();
-    if(actionScroll){
 
+    if(actionScroll){//accion de scroll
         if(aumento>0){
             scrollauto(0.01)
             aumento=aumento-0.01
@@ -462,10 +483,28 @@ function render() {
 
         }
     }
-
-
-
 }
+function mostrar(){
+
+    //const cerrar= new CanvasUI(content,config);
+    const texture  = new THREE.TextureLoader().load('/img/front_end/img/exis.png');
+    const material = new THREE.MeshStandardMaterial( {map: texture,color: 0xffffff, side: THREE.DoubleSide} );
+    var plane = new THREE.PlaneGeometry(0.05, 0.05, 2, 4);
+   const mesh = new THREE.Mesh( plane, material );
+    mesh.position.z=camera.position.z-1.05
+    mesh.position.x=camera.position.x-0.5
+    mesh.position.y=0.5
+    group.add(mesh);
+    mesh.name='cerrar'
+    mostro=false
+    //nombre
+    //descripcion
+    //materia
+    //tipo de archvio
+    //plano
+    crearcarte(camera,group);
+}
+
 function desactivar(){
     actionScroll=false;
     aumento=0;
@@ -516,10 +555,4 @@ function scrollauto(aumento){
         numero.rotation.z=numero.rotation.z+aumento
     });
     console.log(aumento)
-}
-
-function html(){
-    const div= document.getElementById('redes');
-    container.appendChild(div)
-
 }
