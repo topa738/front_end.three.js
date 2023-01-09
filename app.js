@@ -5,10 +5,11 @@ import * as THREE from './three.module.js';
 import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 import { createText } from './jsm/webxr/Text2D.js';
 import {crearcarte} from "./secciones.js";
+import {eliminar} from "./eliminar.js";
 
 let container;
 var camera, scene, renderer;
-let controls, group,group1,group2,group3,group4;
+let controls, group,group1,group2,group3,group4,group5;
 let enableSelection = false;
 let mixer;
 var mostro=true;
@@ -51,6 +52,8 @@ function init() {
     scene.add(group3);
     group4 = new THREE.Group();
     scene.add(group4);
+    group5 = new THREE.Group();
+    scene.add(group5);
 
 
     scene.add(new THREE.AmbientLight(0xFF0000));
@@ -348,9 +351,6 @@ function basicas(){
         } );
         resolve();
     });
-
-
-
 }
 function animate() {
 
@@ -423,6 +423,9 @@ function getIntersections() {
         else{
             console.log(object.padre)
         }
+        if(object.name==='cerrar'){
+            console.log('cerrar')
+        }
 
     }else {
         selecion=false
@@ -441,6 +444,11 @@ function render() {
         getIntersections();
     }
     if(seleccion!=undefined){
+        if(seleccion.name=='cerrar'){
+            eliminar(objects,group5)
+            seleccion=undefined
+
+        }
         if(camera.position.z>-1) {
             camera.position.z=camera.position.z-0.02
             movieScreen1.position.z=movieScreen1.position.z-0.02;
@@ -449,10 +457,8 @@ function render() {
                 mostrar()
                 console.log("Pasa por aca//////////////////////////")
             }
-
         }
 
-        console.log(camera.position.z)
     }else{
         zoom();
     }
@@ -489,20 +495,23 @@ function mostrar(){
     //const cerrar= new CanvasUI(content,config);
     const texture  = new THREE.TextureLoader().load('/img/front_end/img/exis.png');
     const material = new THREE.MeshStandardMaterial( {map: texture,color: 0xffffff, side: THREE.DoubleSide} );
-    var plane = new THREE.PlaneGeometry(0.05, 0.05, 2, 4);
+    const plane = new THREE.PlaneGeometry(0.07, 0.05, 2, 4);
    const mesh = new THREE.Mesh( plane, material );
     mesh.position.z=camera.position.z-1.05
     mesh.position.x=camera.position.x-0.5
     mesh.position.y=0.5
-    group.add(mesh);
+    objects.push(mesh)
+    group5.add(mesh);
     mesh.name='cerrar'
     mostro=false
-    //nombre
+
+
+
     //descripcion
     //materia
     //tipo de archvio
     //plano
-    crearcarte(camera,group);
+    crearcarte(camera,group5);
 }
 
 function desactivar(){
@@ -520,7 +529,7 @@ function zoom(){
         }
     }else{
         if(camera.position.z<0){
-            camera.position.z=camera.position.z+0.005
+            camera.position.z=camera.position.z+0.006
         }
     }
 

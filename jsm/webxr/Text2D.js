@@ -14,7 +14,7 @@ function createText( message, height ) {
 	context.font = 'normal ' + textHeight + 'px Akaash';
 	context.textAlign = 'center';
 	context.textBaseline = 'middle';
-	context.fillStyle = '#ffffff';
+	context.fillStyle = '#000000';
 	context.fillText( message, textWidth / 2, textHeight / 2 );
 
 	const texture = new THREE.Texture( canvas );
