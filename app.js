@@ -52,6 +52,7 @@ function init() {
     scene.add(group3);
     group4 = new THREE.Group();
     scene.add(group4);
+    
     group5 = new THREE.Group();
     scene.add(group5);
 
@@ -446,7 +447,11 @@ function render() {
     if(seleccion!=undefined){
         if(seleccion.name=='cerrar'){
             eliminar(objects,group5)
-            seleccion=undefined
+            group5.clear()
+            seleccion=undefined;
+            setTimeout(function(){
+                mostro=true;
+            }, 1000);
 
         }
         if(camera.position.z>-1) {
@@ -506,11 +511,6 @@ function mostrar(){
     mostro=false
 
 
-
-    //descripcion
-    //materia
-    //tipo de archvio
-    //plano
     crearcarte(camera,group5);
 }
 
@@ -525,11 +525,13 @@ function desactivar(){
 function zoom(){
     if(selecion){//inicio -1/3
         if(camera.position.z>-0.15){
-            camera.position.z=camera.position.z-0.005
+            camera.position.z=camera.position.z-0.007
+            movieScreen1.position.z=movieScreen1.position.z-0.007;
         }
     }else{
         if(camera.position.z<0){
-            camera.position.z=camera.position.z+0.006
+            camera.position.z=camera.position.z+0.007
+            movieScreen1.position.z=movieScreen1.position.z+0.007;
         }
     }
 
