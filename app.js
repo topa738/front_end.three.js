@@ -509,7 +509,13 @@ function mostrar(){
     group5.add(mesh);
     mesh.name='cerrar'
     mostro=false
-
+    fetch('http://localhost:8080/Basicas/files')
+    .then(response => response.text())
+    .then(data => {
+        /** Procesar los datos **/
+        console.log(typeof data)
+        cargarData(JSON.parse(data))
+    })
 
     crearcarte(camera,group5);
 }
@@ -567,3 +573,15 @@ function scrollauto(aumento){
     });
     console.log(aumento)
 }
+
+
+function cargaProgramacion(){
+    
+}
+function cargarData(jsondata){
+    for (let i=0;i<jsondata.length;i++ ){
+        //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
+        console.log(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
+    }
+}
+
