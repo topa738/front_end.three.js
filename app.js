@@ -5,6 +5,7 @@ import * as THREE from './three.module.js';
 import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 import { createText } from './jsm/webxr/Text2D.js';
 import {crearcarte} from "./secciones.js";
+import {bajar} from "./secciones.js";
 import {eliminar} from "./eliminar.js";
 
 let container;
@@ -167,7 +168,7 @@ function init() {
     let position = 0;
 
     function onMouseWheel(event) {
-        if(actionScroll!=true){
+        if(actionScroll!=true && seleccion==undefined){
             console.log(event.deltaY)
 
             if(event.deltaY>0){
@@ -454,7 +455,7 @@ function render() {
             }, 1000);
 
         }
-        if(camera.position.z>-1) {
+        if(camera.position.z>-1.2) {
             camera.position.z=camera.position.z-0.02
             movieScreen1.position.z=movieScreen1.position.z-0.02;
         }else{
@@ -505,9 +506,10 @@ function mostrar(){
     mesh.position.z=camera.position.z-1.05
     mesh.position.x=camera.position.x-0.5
     mesh.position.y=0.5
+    mesh.name='cerrar'
     objects.push(mesh)
     group5.add(mesh);
-    mesh.name='cerrar'
+    
     mostro=false
     fetch('http://localhost:8080/Basicas/files')
     .then(response => response.text())
@@ -515,9 +517,10 @@ function mostrar(){
         /** Procesar los datos **/
         console.log(typeof data)
         cargarData(JSON.parse(data))
+        //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
+       
     })
-
-    crearcarte(camera,group5);
+    
 }
 
 function desactivar(){
@@ -531,8 +534,8 @@ function desactivar(){
 function zoom(){
     if(selecion){//inicio -1/3
         if(camera.position.z>-0.15){
-            camera.position.z=camera.position.z-0.007
-            movieScreen1.position.z=movieScreen1.position.z-0.007;
+            camera.position.z=camera.position.z-0.009
+            movieScreen1.position.z=movieScreen1.position.z-0.009;
         }
     }else{
         if(camera.position.z<0){
@@ -581,6 +584,8 @@ function cargaProgramacion(){
 function cargarData(jsondata){
     for (let i=0;i<jsondata.length;i++ ){
         //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
+        bajar(group5);
+        crearcarte(camera,group5,jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo);
         console.log(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
     }
 }
