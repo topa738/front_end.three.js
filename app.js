@@ -1,9 +1,8 @@
 
 
-import { DragControls } from './jsm/controls/DragControls.js';
-import * as THREE from './three.module.js';
-import { FBXLoader } from './jsm/loaders/FBXLoader.js';
-import { createText } from './jsm/webxr/Text2D.js';
+import * as THREE from 'three';
+import {createText} from "./node_modules/three/examples/jsm/webxr/Text2D.js";
+import {FBXLoader} from "./node_modules/three/examples/jsm/loaders/FBXLoader.js";
 import {crearcarte} from "./secciones.js";
 import {bajar} from "./secciones.js";
 import {eliminar} from "./eliminar.js";
@@ -578,9 +577,6 @@ function scrollauto(aumento){
 }
 
 
-function cargaProgramacion(){
-    
-}
 function cargarData(jsondata){
     for (let i=0;i<jsondata.length;i++ ){
         //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
