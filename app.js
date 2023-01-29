@@ -93,23 +93,25 @@ function init() {
 
 
     const sphere = new THREE.SphereGeometry(0.05, 20, 50);
+    sphere.nombre='Programacion'
     const light2 = new THREE.PointLight(2, 50);
     light2.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({color: 0x0040ff0})));
-    console.log(light2)
     light2.position.z = -1.05
     light2.position.x = -1.2
     light2.name = 'padre'
+    light2.nombre='Programacion'
     objects.push(light2)
     group.add(light2)//movimiento
     //text
     const text = createText( 'Sistemas', 0.1 );
-    objects.push(text)
-    group.add(text)
+    
     text.position.x=light2.position.x-0.15
     text.position.y=light2.position.y-0.15
     text.position.z=light2.position.z+0.1
+    text.nombre='Programacion'
+    text.name='text'
     objects.push(text)
-    group4.add(text)
+    group.add(text)
 
     //video de seguridad
     video = document.createElement('video',);
@@ -145,7 +147,7 @@ function init() {
     movieScreen.position.z = -1.05
     movieScreen.position.x = -1.2
     movieScreen.position.y = 0.35
-    movieScreen.nombre = 'video'
+    movieScreen.nombre = 'Programacion'
     group.add(movieScreen)
     movieScreen.padre = light2
     objects.push(movieScreen)//interacciones
@@ -221,16 +223,19 @@ async function init2(){
 function abogacia(){
     return new Promise((resolve,reject)=>{
         const sphere = new THREE.SphereGeometry( 0.05, 20, 50 );
+        sphere.nombre='Basicas'
         const light5 = new THREE.PointLight( 0x80ff80, 10, 50 );
         light5.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xFFFF00 } ) ) );
         light5.position.z=-1.05
         light5.position.x=1.2
         light5.name='padre'
+        light5.nombre='Basicas'
         group3.add(light5)
         const text = createText( 'Abogacia', 0.1 );
         text.position.x=light5.position.x+0.2
         text.position.y=light5.position.y+0.15
         text.position.z=light5.position.z-0.1
+        text.nombre='Basicas'
         objects.push(text)
         group3.add(text)
 
@@ -250,6 +255,7 @@ function abogacia(){
             hammer.position.z=-1
             hammer.scale.set(1,1,1)
             hammer.position.x=1.5
+            hammer.nombre='Basicas'
             group3.add( hammer );
             hammer.padre=light5
             objects.push(hammer)
@@ -260,10 +266,10 @@ function abogacia(){
     } );
 
 }
-function agronomia(){
+function agronomia(){//obtendra  las direcciones de Basicas hasat que se  agregue Agronomia en el backend 
     return new Promise((resolve,reject)=> {
         const sphere = new THREE.SphereGeometry( 0.05, 20, 50 );
-
+        sphere.nombre='Basicas';
         //agronomia
         // model
         const light3 = new THREE.PointLight( 0x80ff80, 2, 50 );
@@ -271,6 +277,7 @@ function agronomia(){
         light3.position.z=-1.05
         light3.position.y=-1.2
         light3.name='padre'
+        light3.nombre='Basicas'
         group1.add( light3 );
         //text
         const text = createText( 'Agronomia', 0.1 );
@@ -278,6 +285,7 @@ function agronomia(){
         text.position.y=light3.position.y+0.15
         text.position.z=light3.position.z-0.1
         text.rotation.z=Math.PI
+        text.nombre='Basicas'
         objects.push(text)
         group1.add(text)
 
@@ -298,6 +306,7 @@ function agronomia(){
 
             tractor.rotation.x=-Math.PI/2
             tractor.rotation.z=-Math.PI
+            tractor.nombre='Basicas'
             group1.add( tractor );
             tractor.padre=light3
             objects.push(tractor)
@@ -314,17 +323,22 @@ function basicas(){
     return new Promise((resolve,reject)=> {
         const sphere = new THREE.SphereGeometry( 0.05, 20, 50 );
         //light 3
+        sphere.nombre='Basicas';
         const light4 = new THREE.PointLight( 0x80ff80, 10, 50 );
         light4.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xFF0000 } ) ) );
         light4.position.z=-1.05
         light4.position.y=1.2
         light4.name='padre'
+        light4.nombre='Basicas'
+        objects.push(light4)
         group2.add(light4)
+
         const text = createText( 'Basicas', 0.1 );
         text.position.x=light4.position.x-0.15
         text.position.y=light4.position.y-0.15
         text.position.z=light4.position.z+0.1
         text.rotation.z=Math.PI
+        text.nombre='Basicas'
         objects.push(text)
         group4.add(text)
         const loader1 = new FBXLoader();
@@ -347,8 +361,9 @@ function basicas(){
             group2.add( avaco );
             avaco.padre=light4
             objects.push(avaco)
-            objects.push(light4)
+            avaco.nombre='Basicas'
 
+        
         } );
         resolve();
     });
@@ -397,6 +412,7 @@ function onClick( event ) {
 
         const object = intersections[ 0 ].object;
         seleccion=object;
+        console.log(object)
 
     }
 
@@ -418,15 +434,7 @@ function getIntersections() {
         selecion=true
 
         const object = intersections[ 0 ].object;
-        if(object.name==='padre'){
-            console.log(object)
-        }
-        else{
-            console.log(object.padre)
-        }
-        if(object.name==='cerrar'){
-            console.log('cerrar')
-        }
+       
 
     }else {
         selecion=false
@@ -445,13 +453,16 @@ function render() {
         getIntersections();
     }
     if(seleccion!=undefined){
+        if(seleccion.name=='seleccionar'){
+            window.open(seleccion.href, 'Download');
+        }
         if(seleccion.name=='cerrar'){
             eliminar(objects,group5)
             group5.clear()
-            seleccion=undefined;
             setTimeout(function(){
                 mostro=true;
             }, 1000);
+            seleccion=undefined;
 
         }
         if(camera.position.z>-1.2) {
@@ -510,11 +521,13 @@ function mostrar(){
     group5.add(mesh);
     
     mostro=false
-    fetch('http://localhost:8080/Basicas/files')
+    if(seleccion.nombre==undefined){
+        seleccion=seleccion.geometry
+    }
+    fetch('http://localhost:8080/'+seleccion.nombre+'/files')
     .then(response => response.text())
     .then(data => {
         /** Procesar los datos **/
-        console.log(typeof data)
         cargarData(JSON.parse(data))
         //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
        
@@ -581,7 +594,8 @@ function cargarData(jsondata){
     for (let i=0;i<jsondata.length;i++ ){
         //addCapa(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
         bajar(group5);
-        crearcarte(camera,group5,jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo);
+        console.log(seleccion.nombre)
+        crearcarte(camera,group5,objects,seleccion.nombre,jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo);
         console.log(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
     }
 }
