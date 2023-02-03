@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import {createText} from "./node_modules/three/examples/jsm/webxr/Text2D.js";
 import {FBXLoader} from "./node_modules/three/examples/jsm/loaders/FBXLoader.js";
+import { CanvasUI } from './node_modules/three/examples/jsm/CanvasUI/CanvasUI.js';
 import {crearcarte} from "./secciones.js";
 import {bajar} from "./secciones.js";
 import {eliminar} from "./eliminar.js";
@@ -13,11 +14,13 @@ let controls, group,group1,group2,group3,group4,group5;
 let enableSelection = false;
 let mixer;
 var mostro=true;
+let ultimo=undefined;
 
 let mousemove,actionScroll,aumento;
 let tractor,avaco,hammer;
 var video, videoImage, videoImageContext, videoTexture,movieScreen;
 var video1, videoImage1, videoImageContext1, videoTexture1,movieScreen1;
+var video2, videoImage2, videoImageContext2, videoTexture2,movieScreen2;
 let selecion=false;
 var seleccion=undefined;
 
@@ -81,7 +84,7 @@ function init() {
     videoTexture1.minFilter = THREE.LinearFilter;
     videoTexture1.magFilter = THREE.LinearFilter;
 
-    var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture1, overdraw: true, side: THREE.DoubleSide});
+    var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture1, opacity:1,transparent:true});
     // the geometry on which the movie will be displayed;
     // 		movie image will be scaled to fit these dimensions.
     var movieGeometry = new THREE.PlaneGeometry(7, 4, 2, 4);
@@ -90,6 +93,40 @@ function init() {
     movieScreen1.position.x = -1.2
     movieScreen1.nombre = 'video'
     scene.add(movieScreen1)
+
+    //video de backgrpund
+    video2 = document.createElement('video',);
+    video2.id = "myVideo"
+
+    video2.src = '/img/UniversoBackground.mp4';
+
+    video2.load();
+
+
+
+    videoImage2 = document.createElement('canvas');
+    videoImage2.width = 1280;
+    videoImage2.height = 720;
+
+    videoImageContext2 = videoImage2.getContext('2d');
+    // background color if no video present
+    videoImageContext2.fillStyle = '#000000';
+    videoImageContext2.fillRect(0, 0, videoImage2.width, videoImage2.height);
+
+    videoTexture2 = new THREE.Texture(videoImage2);
+    videoTexture2.minFilter = THREE.LinearFilter;
+    videoTexture2.magFilter = THREE.LinearFilter;
+
+    var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture2,opacity:0,transparent:true});
+    // the geometry on which the movie will be displayed;
+    // 		movie image will be scaled to fit these dimensions.
+   
+    movieScreen2 = new THREE.Mesh(movieGeometry, movieMaterial);
+    movieScreen2.position.z = -2
+    movieScreen2.position.x = -1.2
+    movieScreen2.nombre = 'video'
+    
+    scene.add(movieScreen2)
 
 
     const sphere = new THREE.SphereGeometry(0.05, 20, 50);
@@ -175,6 +212,10 @@ function init() {
             if(event.deltaY>0){
                 aumento= Math.PI/2
                 actionScroll=true
+                if(actual>4){
+                    actual=0
+                }else{actual=actual+1}
+                    
             }else{
                 aumento= Math.PI/2
                 aumento=aumento*-1
@@ -200,6 +241,7 @@ function init() {
     startButton.addEventListener( 'click', function () {
 
         video1.play()
+        video2.play()
         const overlay = document.getElementById( 'overlay' );
         overlay.remove();
         video.play()
@@ -428,16 +470,32 @@ function getIntersections() {
     raycaster.setFromCamera( mouse, camera );
 
     const intersections = raycaster.intersectObjects( objects, true );
-
-
+    
     if ( intersections.length > 0 ) {
         selecion=true
 
         const object = intersections[ 0 ].object;
+        if(object.name=='seleccionar' || object.name=='cerrar'){
+            if(object!=ultimo){
+                if(ultimo!=undefined){
+                    ultimo.material.opacity=1
+                }
+                object.material.opacity=0.5
+                ultimo=object
+            }else{
+
+            }
+            
+        }
        
 
     }else {
         selecion=false
+        
+        if(ultimo!=undefined){
+            ultimo.material.opacity=1
+        ultimo=undefined
+        }
     }
 
     return undefined
@@ -446,7 +504,7 @@ function getIntersections() {
 
 function render() {
     renderer.render( scene, camera );
-
+    console.log(camera.position)
     flotar()
 
     if(mousemove!=undefined){
@@ -491,8 +549,16 @@ function render() {
         if ( videoTexture1 )
             videoTexture1.needsUpdate = true;
     }
+    if ( video2.readyState === video2.HAVE_ENOUGH_DATA )
+    {
+        videoImageContext2.drawImage( video2, 0, 0 );
+        if ( videoTexture2 )
+            videoTexture2.needsUpdate = true;
+    }
 
     if(actionScroll){//accion de scroll
+        
+
         if(aumento>0){
             scrollauto(0.01)
             aumento=aumento-0.01
@@ -507,19 +573,41 @@ function render() {
     }
 }
 function mostrar(){
+    const config = {
+        panelSize: { width: 0.1, height: 0.07},
+        width: 212, height: 112,opacity:1,
+        
+        body:{
 
+            type: "img",
+            position:{ top:0.1,left:0.5},
+            height:100,
+            fontSize:25,
+            
+            paddingLeft: 55,
+            borderRadius: 20,
+            width:200,// default height is 512 so this is 512 - header height:70 - footer height:70
+            backgroundColor: "#ffffff",
+            fontColor: "#000",
+            border: "#000"
+  
+          }
+      }
+
+      const content = {
+        body: '/img/front_end/img/exis.png',
+        main:'',
+      }
+      const tagui = new CanvasUI(content,config);
     //const cerrar= new CanvasUI(content,config);
-    const texture  = new THREE.TextureLoader().load('/img/front_end/img/exis.png');
-    const material = new THREE.MeshStandardMaterial( {map: texture,color: 0xffffff, side: THREE.DoubleSide} );
-    const plane = new THREE.PlaneGeometry(0.07, 0.05, 2, 4);
-   const mesh = new THREE.Mesh( plane, material );
-    mesh.position.z=camera.position.z-1.05
-    mesh.position.x=camera.position.x-0.5
-    mesh.position.y=0.5
-    mesh.name='cerrar'
-    objects.push(mesh)
-    group5.add(mesh);
-    
+
+    tagui.mesh.position.z=camera.position.z-1.05
+    tagui.mesh.position.x=camera.position.x-0.5
+    tagui.mesh.rotation.z=-Math.PI/8
+    tagui.mesh.position.y=0.5
+    tagui.mesh.name='cerrar'
+    objects.push(tagui.mesh)
+    group5.add(tagui.mesh);
     mostro=false
     if(seleccion.nombre==undefined){
         seleccion=seleccion.geometry
@@ -550,10 +638,12 @@ function zoom(){
             movieScreen1.position.z=movieScreen1.position.z-0.009;
         }
     }else{
-        if(camera.position.z<0){
-            camera.position.z=camera.position.z+0.007
-            movieScreen1.position.z=movieScreen1.position.z+0.007;
+            if(camera.position.z<0){
+                camera.position.z=camera.position.z+0.007
+                movieScreen1.position.z=movieScreen1.position.z+0.007;
+            
         }
+        
     }
 
 }
@@ -562,7 +652,12 @@ function flotar(){
     group.position.y = 0.04* Math.cos( r );
     group1.position.y = 0.04* Math.cos( r );
     group2.position.y = 0.04* Math.cos( r );
-    group3.position.y = 0.04* Math.cos( r );group4.position.y = 0.04* Math.cos( r );
+    group3.position.y = 0.04* Math.cos( r );
+    group4.position.y = 0.04* Math.cos( r );
+    group5.position.y = 0.04* Math.cos( r );
+}
+function reducir(){
+    
 }
 
 function scrollauto(aumento){
