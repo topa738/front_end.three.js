@@ -11,8 +11,6 @@ import {eliminar} from "./eliminar.js";
 let container;
 var camera, scene, renderer;
 let controls, group,group1,group2,group3,group4,group5;
-let enableSelection = false;
-let mixer;
 var mostro=true;
 let ultimo=undefined;
 
