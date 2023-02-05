@@ -1,6 +1,6 @@
 
   import * as THREE from 'three';
-import { Color } from 'three';
+    import { Color } from 'three';
   import {createText} from "./node_modules/three/examples/jsm/webxr/Text2D.js";
   import { CanvasUI } from './node_modules/three/examples/jsm/CanvasUI/CanvasUI.js';
 export function crearcarte(camera,group,objects,desde,name,decripcion,nombrearchivo){

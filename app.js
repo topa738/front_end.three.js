@@ -11,8 +11,12 @@ import {eliminar} from "./eliminar.js";
 let container;
 var camera, scene, renderer;
 let controls, group,group1,group2,group3,group4,group5;
+
 var mostro=true;
 let ultimo=undefined;
+let actual=0,desbanecer,resaltar;
+let enableSelection = false;
+let mixer;
 
 let mousemove,actionScroll,aumento;
 let tractor,avaco,hammer;
@@ -21,6 +25,7 @@ var video1, videoImage1, videoImageContext1, videoTexture1,movieScreen1;
 var video2, videoImage2, videoImageContext2, videoTexture2,movieScreen2;
 let selecion=false;
 var seleccion=undefined;
+var lista;
 
 const objects = [];
 
@@ -62,7 +67,7 @@ function init() {
     //video de backgrpund
     video1 = document.createElement('video',);
     video1.id = "myVideo"
-
+    video1.loop=true
     video1.src = '/img/front_end/Universe.mp4';
 
     video1.load();
@@ -85,11 +90,12 @@ function init() {
     var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture1, opacity:1,transparent:true});
     // the geometry on which the movie will be displayed;
     // 		movie image will be scaled to fit these dimensions.
-    var movieGeometry = new THREE.PlaneGeometry(7, 4, 2, 4);
+    var movieGeometry = new THREE.PlaneGeometry(6, 3.1);
     movieScreen1 = new THREE.Mesh(movieGeometry, movieMaterial);
     movieScreen1.position.z = -2
     movieScreen1.position.x = -1.2
     movieScreen1.nombre = 'video'
+    movieScreen1.control=video1
     scene.add(movieScreen1)
 
     //video de backgrpund
@@ -97,6 +103,7 @@ function init() {
     video2.id = "myVideo"
 
     video2.src = '/img/UniversoBackground.mp4';
+    video2.loop=true
 
     video2.load();
 
@@ -123,7 +130,7 @@ function init() {
     movieScreen2.position.z = -2
     movieScreen2.position.x = -1.2
     movieScreen2.nombre = 'video'
-    
+    movieScreen2.control=video2
     scene.add(movieScreen2)
 
 
@@ -197,6 +204,9 @@ function init() {
 
     container.appendChild(renderer.domElement);
 
+   
+    
+    
     //mouse
     window.addEventListener("wheel", onMouseWheel)
     window.addEventListener("mousemove", onMouseMove)
@@ -205,17 +215,38 @@ function init() {
 
     function onMouseWheel(event) {
         if(actionScroll!=true && seleccion==undefined){
+            console.log(lista)
             console.log(event.deltaY)
 
             if(event.deltaY>0){
-                aumento= Math.PI/2
+                actual=actual+1
+                if(actual==4){
+                    actual=0;
+                    desbanecer=resaltar;
+                    resaltar=lista[actual];
+                    resaltar.control.play();
+                    }else{
+                        desbanecer=resaltar;
+                        resaltar=lista[actual];
+                        resaltar.control.play();
+                    }
+                    aumento= Math.PI/2
                 actionScroll=true
-                if(actual>4){
-                    actual=0
-                }else{actual=actual+1}
                     
             }else{
-                aumento= Math.PI/2
+                
+                actual=actual-1
+                
+                if(actual==-1){
+                    actual=3;
+                    desbanecer=resaltar;
+                    resaltar=lista[actual];
+                    resaltar.control.play();
+                    }
+                    else{desbanecer=resaltar;
+                        resaltar=lista[actual];
+                        resaltar.control.play();}
+                    aumento= Math.PI/2
                 aumento=aumento*-1
                 actionScroll=true
             }
@@ -239,10 +270,11 @@ function init() {
     startButton.addEventListener( 'click', function () {
 
         video1.play()
-        video2.play()
         const overlay = document.getElementById( 'overlay' );
         overlay.remove();
         video.play()
+        lista=[movieScreen1,movieScreen2,movieScreen1,movieScreen2]
+        resaltar=lista[0]
         animate()
     } );
 
@@ -559,13 +591,18 @@ function render() {
 
         if(aumento>0){
             scrollauto(0.01)
+            cambio(0.00636);
             aumento=aumento-0.01
-            if(aumento<0){desactivar();}
+            
+            if(aumento<0){desactivar();
+            desbanecer.control.pause();}
         }
         if(aumento<0){
             scrollauto(-0.01)
+            cambio(0.00636);
             aumento=aumento+0.01
-            if(aumento>0){desactivar();}
+            if(aumento>0){desactivar();
+                desbanecer.control.pause();}
 
         }
     }
@@ -681,7 +718,11 @@ function scrollauto(aumento){
     });
     console.log(aumento)
 }
+function cambio(cambio){
+    desbanecer.material.opacity=desbanecer.material.opacity-cambio
+    resaltar.material.opacity=resaltar.material.opacity+cambio
 
+}
 
 function cargarData(jsondata){
     for (let i=0;i<jsondata.length;i++ ){
