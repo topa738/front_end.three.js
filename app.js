@@ -555,7 +555,7 @@ function render() {
         }
         if(camera.position.z>-1.2) {
             camera.position.z=camera.position.z-0.02
-            movieScreen1.position.z=movieScreen1.position.z-0.02;
+            lista[actual].position.z=lista[actual].position.z-0.02;
         }else{
             if(mostro){
                 mostrar()
@@ -670,12 +670,12 @@ function zoom(){
     if(selecion){//inicio -1/3
         if(camera.position.z>-0.15){
             camera.position.z=camera.position.z-0.009
-            movieScreen1.position.z=movieScreen1.position.z-0.009;
+            lista[actual].position.z=lista[actual].position.z-0.009;
         }
     }else{
             if(camera.position.z<0){
                 camera.position.z=camera.position.z+0.007
-                movieScreen1.position.z=movieScreen1.position.z+0.007;
+                lista[actual].position.z=lista[actual].position.z+0.007;
             
         }
         
