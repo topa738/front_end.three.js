@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import {createText} from "./node_modules/three/examples/jsm/webxr/Text2D.js";
 import {FBXLoader} from "./node_modules/three/examples/jsm/loaders/FBXLoader.js";
 import { CanvasUI } from './node_modules/three/examples/jsm/CanvasUI/CanvasUI.js';
+
+import Stats from "./node_modules/three/examples/jsm/libs/stats.module.js";
 import {crearcarte} from "./secciones.js";
 import {bajar} from "./secciones.js";
 import {eliminar} from "./eliminar.js";
@@ -11,12 +13,14 @@ import {eliminar} from "./eliminar.js";
 let container;
 var camera, scene, renderer;
 let controls, group,group1,group2,group3,group4,group5;
+let audio1;
 
 var mostro=true;
 let ultimo=undefined;
 let actual=0,desbanecer,resaltar;
 let enableSelection = false;
 let mixer;
+var stats;
 
 let mousemove,actionScroll,aumento;
 let tractor,avaco,hammer;
@@ -58,12 +62,11 @@ function init() {
     scene.add(group3);
     group4 = new THREE.Group();
     scene.add(group4);
-    
     group5 = new THREE.Group();
     scene.add(group5);
 
 
-    scene.add(new THREE.AmbientLight(0xFF0000));
+    //scene.add(new THREE.AmbientLight(0xFF0000));
     //video de backgrpund
     video1 = document.createElement('video',);
     video1.id = "myVideo"
@@ -204,9 +207,17 @@ function init() {
 
     container.appendChild(renderer.domElement);
 
-   
-    
-    
+    //audio 
+    const listener1 = new THREE.AudioListener();
+    camera.add(listener1)
+    audio1 = new THREE.Audio( listener1 );
+    const audioLoader1 = new THREE.AudioLoader();
+    const file1 = './sound/RADIO-VINTAGE_GEN-HDF-19645_preview.mp3';
+    audioLoader1.load( file1, function( buffer ) {
+      audio1.setBuffer( buffer );
+      audio1.setVolume( 1 );
+      
+    });
     //mouse
     window.addEventListener("wheel", onMouseWheel)
     window.addEventListener("mousemove", onMouseMove)
@@ -277,6 +288,9 @@ function init() {
         resaltar=lista[0]
         animate()
     } );
+
+    stats = createStats();
+      document.body.appendChild( stats.domElement );
 
 
 
@@ -484,6 +498,7 @@ function onClick( event ) {
 
         const object = intersections[ 0 ].object;
         seleccion=object;
+        audio1.play()
         console.log(object)
 
     }
@@ -541,16 +556,20 @@ function render() {
         getIntersections();
     }
     if(seleccion!=undefined){
+        
         if(seleccion.name=='seleccionar'){
+           
             window.open(seleccion.href, 'Download');
         }
         if(seleccion.name=='cerrar'){
+           
             eliminar(objects,group5)
             group5.clear()
             setTimeout(function(){
                 mostro=true;
+                seleccion=undefined;
             }, 1000);
-            seleccion=undefined;
+            
 
         }
         if(camera.position.z>-1.2) {
@@ -587,8 +606,7 @@ function render() {
     }
 
     if(actionScroll){//accion de scroll
-        
-
+    
         if(aumento>0){
             scrollauto(0.01)
             cambio(0.00636);
@@ -606,6 +624,7 @@ function render() {
 
         }
     }
+    stats.update();
 }
 function mostrar(){
     const config = {
@@ -733,4 +752,14 @@ function cargarData(jsondata){
         console.log(jsondata[i].nombre,jsondata[i].descripcion,jsondata[i].nombrearchivo)
     }
 }
+function createStats() {
+    stats = new Stats();
+    stats.setMode(0);
+
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0';
+    stats.domElement.style.top = '0';
+
+    return stats;
+  }
 

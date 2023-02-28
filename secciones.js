@@ -40,26 +40,26 @@ export function crearcarte(camera,group,objects,desde,name,decripcion,nombrearch
       tagui.mesh.position.x=camera.position.x
       tagui.mesh.position.y=0.25
 
-    mesh.href='http://localhost:8080/'+desde+'/descargar/'+nombrearchivo
-    mesh.name='seleccionar'
-    mesh.position.z=camera.position.z-1.05
-    mesh.position.x=camera.position.x
-    mesh.position.y=0.25
+     tagui.mesh.href='http://localhost:8080/'+desde+'/descargar/'+nombrearchivo
+     tagui.mesh.name='seleccionar'
+     tagui.mesh.position.z=camera.position.z-1.05
+     tagui.mesh.position.x=camera.position.x
+     tagui.mesh.position.y=0.25
     
 
 
     
     //nombre
     const nombre = createText( name, 0.05 );
-    nombre.position.z=mesh.position.z+0.05
-    nombre.position.x=mesh.position.x-0.1
-    nombre.position.y=mesh.position.y+0.03
+    nombre.position.z= tagui.mesh.position.z+0.05
+    nombre.position.x= tagui.mesh.position.x-0.1
+    nombre.position.y= tagui.mesh.position.y+0.03
     nombre.material.color=color
 
     const descripcion = createText('Desc:'+decripcion, 0.035 );
-    descripcion.position.z=mesh.position.z+0.05
-    descripcion.position.x=mesh.position.x-0.1
-    descripcion.position.y=mesh.position.y 
+    descripcion.position.z= tagui.mesh.position.z+0.05
+    descripcion.position.x= tagui.mesh.position.x-0.1
+    descripcion.position.y= tagui.mesh.position.y 
     descripcion.material.color=color
     
     //group.add(tagui.mesh);
