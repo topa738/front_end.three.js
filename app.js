@@ -9,6 +9,7 @@ import Stats from "./node_modules/three/examples/jsm/libs/stats.module.js";
 import {crearcarte} from "./secciones.js";
 import {bajar} from "./secciones.js";
 import {eliminar} from "./eliminar.js";
+import { _SRGBAFormat } from 'three';
 
 let container;
 var camera, scene, renderer;
@@ -27,7 +28,7 @@ let tractor,avaco,hammer;
 var video, videoImage, videoImageContext, videoTexture,movieScreen;
 var video1, videoImage1, videoImageContext1, videoTexture1,movieScreen1;
 var video2, videoImage2, videoImageContext2, videoTexture2,movieScreen2;
-let selecion=false,vuelta=true;
+let selecion=false,vuelta=true,start=false;
 var seleccion=undefined;
 var lista;
 
@@ -47,7 +48,7 @@ function init() {
 
     container = document.createElement('div');
     document.body.appendChild(container);
-
+    
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.5, 30);
 
 
@@ -95,7 +96,7 @@ function init() {
     // 		movie image will be scaled to fit these dimensions.
     var movieGeometry = new THREE.PlaneGeometry(6, 3.1);
     movieScreen1 = new THREE.Mesh(movieGeometry, movieMaterial);
-    movieScreen1.position.z = -2
+    movieScreen1.position.z = -1.8
     movieScreen1.position.x = -1.2
     movieScreen1.nombre = 'video'
     movieScreen1.control=video1
@@ -130,7 +131,7 @@ function init() {
     // 		movie image will be scaled to fit these dimensions.
    
     movieScreen2 = new THREE.Mesh(movieGeometry, movieMaterial);
-    movieScreen2.position.z = -2
+    movieScreen2.position.z = -1.8
     movieScreen2.position.x = -1.2
     movieScreen2.nombre = 'video'
     movieScreen2.control=video2
@@ -273,7 +274,7 @@ function init() {
 
     window.addEventListener('resize', onWindowResize);
 
-    document.addEventListener('click', onClick);
+   
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('keyup', onKeyUp);
     camera.position.x =-1.3
@@ -287,6 +288,11 @@ function init() {
         lista=[movieScreen1,movieScreen2,movieScreen1,movieScreen2]
         resaltar=lista[0]
         animate()
+        document.addEventListener('click', onClick);
+        setTimeout(function(){
+            start=true
+        }, 2000);
+        
     } );
 
     stats = createStats();
@@ -494,7 +500,7 @@ function onClick( event ) {
 
     const intersections = raycaster.intersectObjects( objects, true );
 
-    if ( intersections.length > 0 ) {
+    if ( intersections.length > 0 && start==true) {
 
         const object = intersections[ 0 ].object;
         seleccion=object;
@@ -575,7 +581,7 @@ function render() {
         }
         if(camera.position.z>-1.2) {
             camera.position.z=camera.position.z-0.02
-            lista[actual].position.z=camera.position.z-2;
+            lista[actual].position.z=camera.position.z-1.8;
         }else{
             if(mostro){
                 mostrar()
@@ -690,12 +696,12 @@ function zoom(){
     if(selecion && vuelta){//inicio -1/3
         if(camera.position.z>-0.15){
             camera.position.z=camera.position.z-0.009
-            lista[actual].position.z= camera.position.z-2;
+            lista[actual].position.z= camera.position.z-1.8;
         }
     }else{
             if(camera.position.z<0){
                 camera.position.z=camera.position.z+0.007
-                lista[actual].position.z=camera.position.z-2;
+                lista[actual].position.z=camera.position.z-1.8;
             
         }
         
